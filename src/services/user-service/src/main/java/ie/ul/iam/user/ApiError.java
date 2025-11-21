@@ -5,11 +5,11 @@ import java.util.Map;
 public class ApiError {
     private String status = "error";
     private String message;
-    private Map<String, Object> details;
+    private Map<String, ?> details;
 
     public ApiError() {}
 
-    public ApiError(String message, Map<String, Object> details) {
+    public ApiError(String message, Map<String, ?> details) {
         this.message = message;
         this.details = details;
     }
@@ -20,5 +20,5 @@ public class ApiError {
 
     public String getStatus() { return status; }
     public String getMessage() { return message; }
-    public Map<String, Object> getDetails() { return details; }
+    public Map<String, ?> getDetails() { return details; }
 }
