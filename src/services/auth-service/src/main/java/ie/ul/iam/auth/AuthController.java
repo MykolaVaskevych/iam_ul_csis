@@ -18,34 +18,26 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
         // Call User-Service to verify the user exists
-        String url = "http://localhost:8081/users"; // TODO:  replace with service discovery
+        String url = "http://localhost:8081/users/by-email/" + request.getEmail();
 
         try {
             // For now, fetch all users
-            ResponseEntity<Object[]> response =
-                    restTemplate.getForEntity(url, Object[].class);
+            ResponseEntity<UserResponce> response =
+                    restTemplate.getForEntity(url, UserResponce.class);
 
-            boolean found = false;
-//            assert response.getBody() != null;
-            for (Object obj : response.getBody()) {
-                String value = obj.toString();
-                if (value.contains(request.getEmail())) {
-                    found = true;
-                    break;
-                }
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+
+                // Password check TODO
+                String token = jwtService.generateToken(request.getEmail());
+                return ResponseEntity.ok(token);
             }
 
-            if (!found) {
-                return ResponseEntity.status(401).body("Invalid credentials");
-            }
-
-            // No password check yet — TODO: add proper BCrypt
-            String token = jwtService.generateToken(request.getEmail());
-
-            return ResponseEntity.ok(token);
+            return ResponseEntity.status(401).body("Invalid credentials");
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Auth service error");
+            // TODO tmp 404.. etc as 401
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
 }
