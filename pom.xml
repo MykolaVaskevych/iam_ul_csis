@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ie.ul</groupId>
+    <artifactId>iam_ul_csis</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>  <!-- IMPORTANT: pom packaging for parent -->
+
+    <name>IAM CSIS</name>
+    <description>Identity and Access Management System for CSIS</description>
+
+    <!-- Child modules (we'll add these as we create them) -->
+    <modules>
+         <module>src/buildingblocks</module>
+         <module>src/services/user-service</module>
+         <module>src/services/auth-service</module>
+        <!-- <module>src/services/role-service</module> -->
+        <!-- <module>src/services/audit-service</module> -->
+        <!-- <module>src/apigateway</module> -->
+    </modules>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Spring Boot version -->
+        <spring-boot.version>3.4.1</spring-boot.version>
+
+        <!-- Other versions -->
+        <lombok.version>1.18.36</lombok.version>
+        <grpc.version>1.57.2</grpc.version>
+        <protobuf.version>3.24.2</protobuf.version>
+    </properties>
+
+    <!-- Spring Boot parent (gives us dependency management) -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.1</version>
+        <relativePath/>
+    </parent>
+
+    <!-- Dependency management (versions for all child modules) -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Our own buildingblocks module -->
+            <dependency>
+                <groupId>ie.ul</groupId>
+                <artifactId>buildingblocks</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- gRPC -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
