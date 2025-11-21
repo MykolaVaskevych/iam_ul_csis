@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -19,13 +20,25 @@ public class UserController {
     private UserRepository userRepository;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        // TODO check if user exists
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return ResponseEntity
+                    .status(409) // Conflict
+                    .body(Map.of(
+                            "error", "User already exists",
+                            "email", user.getEmail()
+                    ));
+        }
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String hashed = encoder.encode(user.getPassword());
         user.setPassword(hashed);
-        return userRepository.save(user);
+
+        User saved = userRepository.save(user);
+        return ResponseEntity.ok(saved);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
