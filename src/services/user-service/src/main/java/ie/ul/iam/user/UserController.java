@@ -1,5 +1,6 @@
 package ie.ul.iam.user;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +20,7 @@ public class UserController {
     // CREATE USER
     // ----------------------------------------------------------------------
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.status(409).body(
@@ -58,7 +59,7 @@ public class UserController {
 
     // ----------------------------------------------------------------------
     // GET ALL USERS
-    // ----------------------------------------------------------------------
+    // ----this is line 62------------------------------------------------------------------
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         List<User> users = userRepository.findAll();

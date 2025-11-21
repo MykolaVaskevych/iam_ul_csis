@@ -1,6 +1,12 @@
 package ie.ul.iam.auth;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class LoginRequest {
+
+    @NotBlank(message = "email is required")
+    @Email(message = "email should be valid")
     private String email;
     private String password;
 

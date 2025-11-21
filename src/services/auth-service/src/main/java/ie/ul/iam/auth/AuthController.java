@@ -1,5 +1,6 @@
 package ie.ul.iam.auth;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -20,7 +21,7 @@ public class AuthController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
 
         String url = "http://localhost:8081/users/by-email/" + request.getEmail();
 
