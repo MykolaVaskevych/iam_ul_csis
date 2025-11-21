@@ -5,6 +5,7 @@ public class UserResponce {
     public String username;
     public String email;
     public Long id;
+    private String password;
 
     public UserResponce() {
     }
@@ -31,5 +32,12 @@ public class UserResponce {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

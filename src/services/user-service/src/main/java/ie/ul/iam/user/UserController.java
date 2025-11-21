@@ -20,6 +20,7 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
+        // TODO check if user exists
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String hashed = encoder.encode(user.getPassword());
         user.setPassword(hashed);

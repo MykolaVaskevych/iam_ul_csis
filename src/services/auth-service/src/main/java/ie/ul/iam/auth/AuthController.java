@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -21,23 +23,27 @@ public class AuthController {
         String url = "http://localhost:8081/users/by-email/" + request.getEmail();
 
         try {
-            // For now, fetch all users
-            ResponseEntity<UserResponce> response =
-                    restTemplate.getForEntity(url, UserResponce.class);
+            ResponseEntity<UserResponce> response = restTemplate.getForEntity(url, UserResponce.class);
 
-
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-
-                // Password check TODO
-                String token = jwtService.generateToken(request.getEmail());
-                return ResponseEntity.ok(token);
+            if(!response.getStatusCode().is2xxSuccessful() || response.getBody()==null) {
+                return ResponseEntity.status(401).body("ERROR response is null or code is not 200 check AuthController");
             }
 
-            return ResponseEntity.status(401).body("Invalid credentials");
+            UserResponce user = response.getBody();
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+            // check pass
+            if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(401).body("ERROR passowrd does not much, try another LOL");
+            }
+
+            // if pass ok get for user jwt token
+            String token = jwtService.generateToken(user.getEmail());
+
+            return ResponseEntity.ok(token);
 
         } catch (Exception e) {
-            // TODO tmp 404.. etc as 401
-            return ResponseEntity.status(401).body("Invalid credentials");
+            return ResponseEntity.status(401).body(e.getMessage());
         }
     }
 }
