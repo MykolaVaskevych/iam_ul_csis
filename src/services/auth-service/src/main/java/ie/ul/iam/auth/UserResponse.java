@@ -1,13 +1,13 @@
 package ie.ul.iam.auth;
 
-public class UserResponce {
+public class UserResponse {
 
     public String username;
     public String email;
     public Long id;
     private String password;
 
-    public UserResponce() {
+    public UserResponse() {
     }
 
     public Long getId() {

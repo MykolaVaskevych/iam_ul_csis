@@ -2,15 +2,11 @@ package ie.ul.iam.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -19,16 +15,19 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    // ----------------------------------------------------------------------
+    // CREATE USER
+    // ----------------------------------------------------------------------
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity
-                    .status(409) // Conflict
-                    .body(Map.of(
-                            "error", "User already exists",
-                            "email", user.getEmail()
-                    ));
+            return ResponseEntity.status(409).body(
+                    new ApiError(
+                            "User already exists",
+                            Map.of("email", user.getEmail())
+                    )
+            );
         }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -36,29 +35,50 @@ public class UserController {
         user.setPassword(hashed);
 
         User saved = userRepository.save(user);
-        return ResponseEntity.ok(saved);
+
+        return ResponseEntity.ok(ApiResponse.success(saved));
     }
 
-
+    // ----------------------------------------------------------------------
+    // GET USER BY ID
+    // ----------------------------------------------------------------------
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+
+        return userRepository.findById(id)
+                .<ResponseEntity<?>>map(user ->
+                        ResponseEntity.ok(ApiResponse.success(user))
+                )
+                .orElseGet(() ->
+                        ResponseEntity.status(404)
+                                .body(new ApiError("User not found",
+                                        Map.of("id", id)))
+                );
     }
 
+    // ----------------------------------------------------------------------
+    // GET ALL USERS
+    // ----------------------------------------------------------------------
     @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<?> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return ResponseEntity.ok(ApiResponse.success(users));
     }
 
+    // ----------------------------------------------------------------------
+    // GET USER BY EMAIL
+    // ----------------------------------------------------------------------
     @GetMapping("/by-email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return userRepository.findByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
 
+        return userRepository.findByEmail(email)
+                .<ResponseEntity<?>>map(user ->
+                        ResponseEntity.ok(ApiResponse.success(user))
+                )
+                .orElseGet(() ->
+                        ResponseEntity.status(404)
+                                .body(new ApiError("User not found",
+                                        Map.of("email", email)))
+                );
+    }
 }
