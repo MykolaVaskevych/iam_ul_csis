@@ -44,6 +44,25 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+<!--        db1-->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+<!--db2-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+<!--db3???  TODO figure out what i need, update docker, updated versions.-->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
