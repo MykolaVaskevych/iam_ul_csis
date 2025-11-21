@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +20,9 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashed = encoder.encode(user.getPassword());
+        user.setPassword(hashed);
         return userRepository.save(user);
     }
 

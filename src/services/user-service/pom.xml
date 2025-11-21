@@ -31,7 +31,12 @@
             <scope>runtime</scope>
         </dependency>
 
-
+        <!--        for passwords -->
+        <!--        pulling whole Spring Security framework maybe?-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
